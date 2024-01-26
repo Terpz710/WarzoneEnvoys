@@ -8,7 +8,7 @@ use pocketmine\block\VanillaBlocks;
 use pocketmine\event\Listener;
 use pocketmine\plugin\PluginBase;
 use pocketmine\math\Vector3;
-use pocketmine\utils\Config;
+use pocketmine\Player;
 
 use Terpz710\WarzoneEnvoys\Task\EnvoyTask;
 
@@ -38,9 +38,12 @@ class Loader extends PluginBase implements Listener {
             $position = new Vector3($chestLocation["x"], $chestLocation["y"], $chestLocation["z"]);
             
             $level->setBlock($position, $chest);
-
-            $world->broadcastMessage("A chest has spawned!");
-
+            
+            foreach ($this->getServer()->getOnlinePlayers() as $player) {
+                if ($player instanceof Player) {
+                    $player->sendMessage("A chest has spawned!");
+                }
+            }
         } else {
             $this->getLogger()->error("World not found: " . $chestLocation["world"]);
         }
