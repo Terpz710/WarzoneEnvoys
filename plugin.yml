@@ -1,0 +1,6 @@
+name: WarzoneEnvoys
+version: 1.0.0
+author: Terpz710
+api: 5.0.0
+main: Terpz710\WarzoneEnvoys\Loader
+description: Adds warzone crates(envoys) at the specified location.
