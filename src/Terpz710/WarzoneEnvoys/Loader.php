@@ -8,6 +8,7 @@ use pocketmine\block\VanillaBlocks;
 use pocketmine\event\Listener;
 use pocketmine\plugin\PluginBase;
 use pocketmine\math\Vector3;
+use pocketmine\utils\Config;
 
 use Terpz710\WarzoneEnvoys\Task\EnvoyTask;
 
@@ -17,12 +18,14 @@ class Loader extends PluginBase implements Listener {
         $this->saveDefaultConfig();
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
 
-        $this->getScheduler()->scheduleRepeatingTask(new EnvoyTask($this), 1200);
+        $targetTimeSeconds = $this->getConfig()->get("target_time", 30);
+        $targetTimeTicks = $targetTimeSeconds * 20;
+
+        $this->getScheduler()->scheduleRepeatingTask(new EnvoyTask($this), $targetTimeTicks);
     }
 
     public function createChest() {
         $config = $this->getConfig();
-        $targetTime = $config->get("target_time", 6000);
         $chestLocation = $config->get("chest_location", []);
 
         $worldManager = $this->getServer()->getWorldManager();
@@ -35,6 +38,9 @@ class Loader extends PluginBase implements Listener {
             $position = new Vector3($chestLocation["x"], $chestLocation["y"], $chestLocation["z"]);
             
             $level->setBlock($position, $chest);
+
+            $world->broadcastMessage("A chest has spawned!");
+
         } else {
             $this->getLogger()->error("World not found: " . $chestLocation["world"]);
         }
