@@ -1,11 +1,14 @@
 # Made by Terpz710
 
 # Time that chest will spawn.
-target_time: 6000
+target_time: 30
 
-# Chest location settings
-chest_location:
-  x: 0
-  y: 64
-  z: 0
-  world: "world"
+chest_locations:
+  - world: "world"
+    x: 10
+    y: 64
+    z: 10
+  - world: "world"
+    x: 20
+    y: 64
+    z: 20
