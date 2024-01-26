@@ -17,13 +17,6 @@ class EnvoyTask extends Task {
     }
 
     public function onRun(): void {
-        $currentTime = $this->plugin->getServer()->getTick() % 24000;
-
-        $config = $this->plugin->getConfig();
-        $targetTime = $config->get("target_time", 6000);
-
-        if ($currentTime === $targetTime) {
-            $this->plugin->createChest();
-        }
+        $this->plugin->createChest();
     }
 }
