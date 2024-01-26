@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Terpz710\WarzoneEnvoys;
 
-use pocketmine\block\Block;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\event\Listener;
 use pocketmine\plugin\PluginBase;
+use pocketmine\math\Vector3;
 
 use Terpz710\WarzoneEnvoys\Task\EnvoyTask;
 
@@ -31,8 +31,10 @@ class Loader extends PluginBase implements Listener {
         if ($world !== null) {
             $level = $worldManager->getWorldByName($chestLocation["world"]);
             $chest = VanillaBlocks::CHEST();
-            $chest->setComponents($chestLocation["x"], $chestLocation["y"], $chestLocation["z"]);
-            $level->setBlock($chest, $chest);
+            
+            $position = new Vector3($chestLocation["x"], $chestLocation["y"], $chestLocation["z"]);
+            
+            $level->setBlock($position, $chest);
         } else {
             $this->getLogger()->error("World not found: " . $chestLocation["world"]);
         }
