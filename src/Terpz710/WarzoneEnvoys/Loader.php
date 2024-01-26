@@ -29,7 +29,7 @@ class Loader extends PluginBase implements Listener {
         $world = $worldManager->getWorldByName($chestLocation["world"]);
 
         if ($world !== null) {
-            $level = $world->getWorld();
+            $level = $world->getWorldManager()->getWorldByName();
             $chest = VanillaBlocks::CHEST();
             $chest->setComponents($chestLocation["x"], $chestLocation["y"], $chestLocation["z"]);
             $level->setBlock($chest, $chest);
