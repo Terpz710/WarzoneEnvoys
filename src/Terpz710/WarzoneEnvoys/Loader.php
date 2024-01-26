@@ -8,7 +8,7 @@ use pocketmine\block\VanillaBlocks;
 use pocketmine\event\Listener;
 use pocketmine\plugin\PluginBase;
 use pocketmine\math\Vector3;
-use pocketmine\Player;
+use pocketmine\player\Player;
 
 use Terpz710\WarzoneEnvoys\Task\EnvoyTask;
 
