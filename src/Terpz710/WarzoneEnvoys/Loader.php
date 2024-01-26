@@ -26,26 +26,29 @@ class Loader extends PluginBase implements Listener {
 
     public function createChest() {
         $config = $this->getConfig();
-        $chestLocation = $config->get("chest_location", []);
+        $chestLocations = $config->get("chest_locations", []);
 
-        $worldManager = $this->getServer()->getWorldManager();
-        $world = $worldManager->getWorldByName($chestLocation["world"]);
+        foreach ($chestLocations as $chestLocation) {
+            $worldName = $chestLocation["world"];
+            $worldManager = $this->getServer()->getWorldManager();
+            $world = $worldManager->getWorldByName($worldName);
 
-        if ($world !== null) {
-            $level = $worldManager->getWorldByName($chestLocation["world"]);
-            $chest = VanillaBlocks::CHEST();
-            
-            $position = new Vector3($chestLocation["x"], $chestLocation["y"], $chestLocation["z"]);
-            
-            $level->setBlock($position, $chest);
-            
-            foreach ($this->getServer()->getOnlinePlayers() as $player) {
-                if ($player instanceof Player) {
-                    $player->sendMessage("A chest has spawned!");
+            if ($world !== null) {
+                $level = $worldManager->getWorldByName($worldName);
+                $chest = VanillaBlocks::CHEST();
+
+                $position = new Vector3($chestLocation["x"], $chestLocation["y"], $chestLocation["z"]);
+
+                $level->setBlock($position, $chest);
+
+                foreach ($this->getServer()->getOnlinePlayers() as $player) {
+                    if ($player instanceof Player) {
+                        $player->sendMessage("A chest has spawned at $worldName, X: {$position->getX()}, Y: {$position->getY()}, Z: {$position->getZ()}!");
+                    }
                 }
+            } else {
+                $this->getLogger()->error("World not found: " . $worldName);
             }
-        } else {
-            $this->getLogger()->error("World not found: " . $chestLocation["world"]);
         }
     }
 }
