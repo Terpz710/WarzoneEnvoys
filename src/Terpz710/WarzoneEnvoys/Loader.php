@@ -132,6 +132,7 @@ class Loader extends PluginBase implements Listener {
                     break;
                 }
             }
+            $world->setBlock($position, VanillaBlocks::AIR());
         }
     }
 }
