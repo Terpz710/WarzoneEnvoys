@@ -109,7 +109,7 @@ class Loader extends PluginBase implements Listener {
                     foreach ($enchantmentData as $enchantmentString) {
                         $enchantmentComponents = explode("=", $enchantmentString);
                         $enchantmentName = $enchantmentComponents[0];
-                        $enchantmentLevel = $enchantmentComponents[1] ?? 1; // Default level is 1 if not specified
+                        $enchantmentLevel = $enchantmentComponents[1] ?? 1;
 
                         $enchantment = StringToEnchantmentParser::getInstance()->parse($enchantmentName);
                         $enchantmentInstance = new EnchantmentInstance($enchantment, (int)$enchantmentLevel);
