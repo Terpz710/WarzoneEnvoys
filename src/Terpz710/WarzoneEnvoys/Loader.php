@@ -89,7 +89,16 @@ class Loader extends PluginBase implements Listener {
             shuffle($availableSlots);
 
             foreach ($itemsData as $itemString) {
-                $item = StringToItemParser::getInstance()->parse($itemString);
+                $itemComponents = explode(":", $itemString);
+                $itemName = $itemComponents[0];
+                $customName = $itemComponents[1] ?? null;
+                $quantity = $itemComponents[2] ?? 1;
+                $item = StringToItemParser::getInstance()->parse($itemName);
+                $item->setCount((int)$quantity);
+
+                if ($customName !== null) {
+                    $item->setCustomName($customName);
+                }
                 $slotIndex = array_pop($availableSlots);
 
                 if ($slotIndex !== null) {
