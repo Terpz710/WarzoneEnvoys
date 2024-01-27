@@ -7,6 +7,7 @@ namespace Terpz710\WarzoneEnvoys;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\block\tile\Chest as TileChest;
 use pocketmine\event\Listener;
+use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\plugin\PluginBase;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
@@ -31,7 +32,43 @@ class Loader extends PluginBase implements Listener {
         $this->getScheduler()->scheduleRepeatingTask(new EnvoyTask($this), $targetTimeTicks);
     }
 
-    public function createChest(): void {
+    public function onPlayerInteract(PlayerInteractEvent $event): void {
+        $player = $event->getPlayer();
+        $block = $event->getBlock();
+
+        if ($block->getTypeId() === VanillaBlocks::CHEST()->getTypeId()) {
+            $event->cancel();
+            $this->dropItemsFromChest($block->getPosition());
+            $this->removeChest($block->getPosition());
+            $player->sendMessage(TextFormat::RED . "Chest opening cancelled. Items dropped to the floor.");
+        }
+    }
+
+    private function removeChest(Vector3 $position): void {
+        $world = $position->getWorld();
+        if ($world !== null) {
+            $world->setBlock($position, VanillaBlocks::AIR());
+        }
+    }
+
+    private function dropItemsFromChest(Vector3 $position): void {
+        $world = $position->getWorld();
+
+        if ($world !== null) {
+            $tile = $world->getTile($position);
+
+            if ($tile !== null && $tile instanceof TileChest) {
+                $inventory = $tile->getInventory();
+
+                foreach ($inventory->getContents() as $slot => $item) {
+                    $world->dropItem($position->add(0.5, 1, 0.5), $item);
+                    $inventory->clear($slot);
+                }
+            }
+        }
+    }
+
+    public function createChest() {
         $config = $this->getConfig();
         $chestLocations = $config->get("chest_locations", []);
 
