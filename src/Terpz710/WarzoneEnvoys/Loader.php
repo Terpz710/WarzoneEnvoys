@@ -58,7 +58,7 @@ class Loader extends PluginBase implements Listener {
 
                 $this->addItemsToChest($world, $position, $itemsData);
 
-                $this->getScheduler()->scheduleDelayedTask(new ClosureTask(function (int $currentTick) use ($world, $position) {
+                $this->getScheduler()->scheduleDelayedTask(new ClosureTask(function () use ($world, $position) {
                     $block = $world->getBlock($position);
                     if ($block instanceof Chest) {
                         $world->setBlock($position, VanillaBlocks::AIR());
