@@ -24,7 +24,7 @@ class Loader extends PluginBase implements Listener {
         $this->saveResource("items.yml");
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
 
-        $targetTimeSeconds = $this->getConfig()->get("target_time", 30);
+        $targetTimeSeconds = $this->getConfig()->get("target_time", 60);
         $targetTimeTicks = $targetTimeSeconds * 20;
 
         $this->getScheduler()->scheduleRepeatingTask(new EnvoyTask($this), $targetTimeTicks);
@@ -37,7 +37,7 @@ class Loader extends PluginBase implements Listener {
         $itemsConfig = new Config($this->getDataFolder() . "items.yml", Config::YAML);
         $itemsData = $itemsConfig->get("items", []);
 
-        $chestDespawnTime = $config->get("chest_despawn_time", 60);
+        $chestDespawnTime = $config->get("chest_despawn_time", 30);
 
         foreach ($chestLocations as $chestLocation) {
             $worldName = $chestLocation["world"];
@@ -62,6 +62,11 @@ class Loader extends PluginBase implements Listener {
                     $block = $world->getBlock($position);
                     if ($block instanceof TileChest) {
                         $world->setBlock($position, VanillaBlocks::AIR());
+                        foreach ($this->getServer()->getOnlinePlayers() as $player) {
+                            if ($player instanceof Player) {
+                                $player->sendMessage("The chest at X: {$position->getX()}, Y: {$position->getY()}, Z: {$position->getZ()} has despawned!");
+                            }
+                        }
                     }
                 }), $chestDespawnTime * 20);
             } else {
