@@ -13,6 +13,7 @@ use pocketmine\world\World;
 use pocketmine\block\tile\Chest;
 use pocketmine\utils\Config;
 use pocketmine\item\StringToItemParser;
+use pocketmine\scheduler\ClosureTask;
 
 use Terpz710\WarzoneEnvoys\Task\EnvoyTask;
 
@@ -36,6 +37,8 @@ class Loader extends PluginBase implements Listener {
         $itemsConfig = new Config($this->getDataFolder() . "items.yml", Config::YAML);
         $itemsData = $itemsConfig->get("items", []);
 
+        $chestDespawnTime = $config->get("chest_despawn_time", 30);
+
         foreach ($chestLocations as $chestLocation) {
             $worldName = $chestLocation["world"];
             $world = $this->getServer()->getWorldManager()->getWorldByName($worldName);
@@ -54,6 +57,13 @@ class Loader extends PluginBase implements Listener {
                 }
 
                 $this->addItemsToChest($world, $position, $itemsData);
+
+                $this->getScheduler()->scheduleDelayedTask(new ClosureTask(function (int $currentTick) use ($world, $position) {
+                    $block = $world->getBlock($position);
+                    if ($block instanceof Chest) {
+                        $world->setBlock($position, VanillaBlocks::AIR());
+                    }
+                }), $chestDespawnTime * 20);
             } else {
                 $this->getLogger()->error("World not found: " . $worldName);
             }
