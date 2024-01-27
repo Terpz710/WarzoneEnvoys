@@ -7,6 +7,7 @@ namespace Terpz710\WarzoneEnvoys;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\block\tile\Chest as TileChest;
 use pocketmine\event\Listener;
+use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\plugin\PluginBase;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
@@ -29,6 +30,22 @@ class Loader extends PluginBase implements Listener {
         $targetTimeSeconds = $this->getConfig()->get("target_time", 60);
         $targetTimeTicks = $targetTimeSeconds * 20;
         $this->getScheduler()->scheduleRepeatingTask(new EnvoyTask($this), $targetTimeTicks);
+    }
+
+    public function onPlayerInteract(PlayerInteractEvent $event): void {
+        $block = $event->getBlock();
+        $player = $event->getPlayer();
+
+        if ($block->getTypeId() === VanillaBlocks::CHEST()->getTypeId()) {
+            $world = $block->getWorld();
+            $position = $block->asVector3();
+
+            if ($event->getAction() === PlayerInteractEvent::RIGHT_CLICK_BLOCK) {
+                $this->getScheduler()->scheduleDelayedTask(new ClosureTask(function () use ($world, $position) {
+                    $world->setBlock($position, VanillaBlocks::AIR());
+                }), 20 * 10);
+            }
+        }
     }
 
     public function createChest(): void {
@@ -132,7 +149,6 @@ class Loader extends PluginBase implements Listener {
                     break;
                 }
             }
-            $world->setBlock($position, VanillaBlocks::AIR());
         }
     }
 }
