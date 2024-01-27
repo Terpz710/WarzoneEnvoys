@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace Terpz710\WarzoneEnvoys;
 
 use pocketmine\block\VanillaBlocks;
-use pocketmine\block\tile\Chest;
-use pocketmine\block\Chest;
+use pocketmine\block\tile\Chest as TileChest;
 use pocketmine\event\Listener;
 use pocketmine\plugin\PluginBase;
 use pocketmine\math\Vector3;
@@ -61,7 +60,7 @@ class Loader extends PluginBase implements Listener {
 
                 $this->getScheduler()->scheduleDelayedTask(new ClosureTask(function () use ($world, $position) {
                     $block = $world->getBlock($position);
-                    if ($block instanceof Chest) {
+                    if ($block instanceof TileChest) {
                         $world->setBlock($position, VanillaBlocks::AIR());
                     }
                 }), $chestDespawnTime * 20);
@@ -74,7 +73,7 @@ class Loader extends PluginBase implements Listener {
     private function addItemsToChest(World $world, Vector3 $position, array $itemsData) {
         $tile = $world->getTile($position);
 
-        if ($tile !== null && $tile instanceof Chest) {
+        if ($tile !== null && $tile instanceof TileChest) {
             $inventory = $tile->getInventory();
 
             foreach ($itemsData as $itemString) {
