@@ -43,7 +43,7 @@ class Loader extends PluginBase implements Listener {
 
                 foreach ($this->getServer()->getOnlinePlayers() as $player) {
                     if ($player instanceof Player) {
-                        $player->sendMessage("A chest has spawned at $worldName, X: {$position->getX()}, Y: {$position->getY()}, Z: {$position->getZ()}!");
+                        $player->sendMessage("A chest has spawned at {$worldName}, X: {$position->getX()}, Y: {$position->getY()}, Z: {$position->getZ()}!");
                     }
                 }
             } else {
