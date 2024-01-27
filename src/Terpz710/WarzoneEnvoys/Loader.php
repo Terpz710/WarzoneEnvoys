@@ -7,12 +7,10 @@ namespace Terpz710\WarzoneEnvoys;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\block\tile\Chest as TileChest;
 use pocketmine\event\Listener;
-use pocketmine\event\player\PlayerInteractEvent;
-use pocketmine\player\Player;
 use pocketmine\plugin\PluginBase;
 use pocketmine\math\Vector3;
+use pocketmine\player\Player;
 use pocketmine\world\World;
-use pocketmine\world\WorldManager;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat;
 use pocketmine\scheduler\ClosureTask;
@@ -24,9 +22,6 @@ use Terpz710\WarzoneEnvoys\Task\EnvoyTask;
 
 class Loader extends PluginBase implements Listener {
 
-    /** @var WorldManager */
-    private $worldManager;
-
     public function onEnable(): void {
         $this->saveDefaultConfig();
         $this->saveResource("items.yml");
@@ -34,28 +29,6 @@ class Loader extends PluginBase implements Listener {
         $targetTimeSeconds = $this->getConfig()->get("target_time", 60);
         $targetTimeTicks = $targetTimeSeconds * 20;
         $this->getScheduler()->scheduleRepeatingTask(new EnvoyTask($this), $targetTimeTicks);
-
-        $this->worldManager = $this->getServer()->getWorldManager();
-    }
-
-    public function onPlayerInteract(PlayerInteractEvent $event): void {
-        $world = $event->getPlayer()->getWorld();
-
-        if ($world !== null && $world->getBlock($event->getBlock()->asVector3())->getTypeId() === VanillaBlocks::CHEST()->getTypeId()) {
-            $worldName = $world->getFolderName();
-            $currentWorld = $this->worldManager->getWorldByName($worldName);
-
-            if ($currentWorld !== null) {
-                $position = $event->getBlock()->asVector3();
-                if ($event->getAction() === PlayerInteractEvent::RIGHT_CLICK_BLOCK) {
-                    $this->getScheduler()->scheduleDelayedTask(new ClosureTask(function () use ($currentWorld, $position) {
-                        $currentWorld->setBlock($position, VanillaBlocks::AIR());
-                    }), 20 * 10);
-                }
-            } else {
-                $this->getLogger()->error("World not found: " . $worldName);
-            }
-        }
     }
 
     public function createChest(): void {
@@ -70,7 +43,7 @@ class Loader extends PluginBase implements Listener {
 
         foreach ($chestLocations as $chestLocation) {
             $worldName = $chestLocation["world"];
-            $world = $this->worldManager->getWorldByName($worldName);
+            $world = $this->getServer()->getWorldManager()->getWorldByName($worldName);
 
             if ($world !== null) {
                 $chest = VanillaBlocks::CHEST();
@@ -145,7 +118,6 @@ class Loader extends PluginBase implements Listener {
                         $enchantmentComponents = explode("=", $enchantmentString);
                         $enchantmentName = $enchantmentComponents[0];
                         $enchantmentLevel = $enchantmentComponents[1] ?? 1;
-
                         $enchantment = StringToEnchantmentParser::getInstance()->parse($enchantmentName);
                         $enchantmentInstance = new EnchantmentInstance($enchantment, (int)$enchantmentLevel);
                         $item->addEnchantment($enchantmentInstance);
