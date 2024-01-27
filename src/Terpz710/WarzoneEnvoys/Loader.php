@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace Terpz710\WarzoneEnvoys;
 
 use pocketmine\block\VanillaBlocks;
+use pocketmine\block\tile\Chest;
+use pocketmine\block\Chest;
 use pocketmine\event\Listener;
 use pocketmine\plugin\PluginBase;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
 use pocketmine\world\World;
-use pocketmine\block\tile\Chest;
 use pocketmine\utils\Config;
 use pocketmine\item\StringToItemParser;
 use pocketmine\scheduler\ClosureTask;
