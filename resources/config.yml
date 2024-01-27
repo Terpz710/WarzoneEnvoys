@@ -3,9 +3,7 @@
 # Time that chest will spawn.
 target_time: 60
 
-# Despawn timer
-chest_despawn_time: 30
-
+# Where envoys will spawn
 chest_locations:
   - world: "world"
     x: 10
