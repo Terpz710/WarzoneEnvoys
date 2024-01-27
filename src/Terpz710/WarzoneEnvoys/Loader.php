@@ -8,6 +8,7 @@ use pocketmine\block\VanillaBlocks;
 use pocketmine\block\tile\Chest as TileChest;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerInteractEvent;
+use pocketmine\world\particle\FloatingTextParticle;
 use pocketmine\plugin\PluginBase;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
@@ -87,6 +88,7 @@ class Loader extends PluginBase implements Listener {
                 $position = new Vector3($chestLocation["x"], $chestLocation["y"], $chestLocation["z"]);
                 $world->setBlock($position, $chest);
                 $this->addItemsToChest($world, $position);
+                $this->addFloatingTextAboveChest($world, $position);
             } else {
                 $this->getLogger()->error("World not found: " . $worldName);
             }
@@ -171,5 +173,11 @@ class Loader extends PluginBase implements Listener {
                 }
             }
         }
+    }
+
+    private function addFloatingTextAboveChest(World $world, Vector3 $position): void {
+        $text = "Envoy\nTap me!";
+        $floatingText = new FloatingTextParticle($position->add(0.5, 1.5, 0.5), $text);
+        $world->addParticle($floatingText);
     }
 }
