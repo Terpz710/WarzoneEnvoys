@@ -68,9 +68,17 @@ class Loader extends PluginBase implements Listener {
 
         foreach ($countdown as $seconds) {
             if ($seconds <= $targetTimeSeconds) {
-                $this->getScheduler()->scheduleDelayedTask(new ClosureTask(function () use ($player, $message, $seconds) {
-                    $player->sendMessage(TextFormat::YELLOW . "$message $seconds" . " seconds§e!");
-                }), ($targetTimeSeconds - $seconds) * 20);
+                $countdownTask = new ClosureTask(function () use ($player, $message, $seconds) {
+
+                    if ($player->isOnline()) {
+                        $player->sendMessage(TextFormat::YELLOW . "$message $seconds" . " seconds§e!");
+                    }
+                });
+                $taskHandler = $this->getScheduler()->scheduleDelayedTask($countdownTask, ($targetTimeSeconds - $seconds) * 20);
+
+                if ($taskHandler->isCancelled()) {
+                    break;
+                }
             }
         }
     }
@@ -102,7 +110,7 @@ class Loader extends PluginBase implements Listener {
                 if ($customName !== null) {
                     $item->setCustomName($customName);
                 }
-                
+
                 if ($enchantments !== null) {
                     $enchantmentData = explode(":", $enchantments);
 
