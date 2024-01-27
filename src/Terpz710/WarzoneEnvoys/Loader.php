@@ -13,6 +13,7 @@ use pocketmine\player\Player;
 use pocketmine\world\World;
 use pocketmine\utils\Config;
 use pocketmine\item\StringToItemParser;
+use pocketmine\utils\TextFormat;
 use pocketmine\scheduler\ClosureTask;
 
 use Terpz710\WarzoneEnvoys\Task\EnvoyTask;
@@ -23,19 +24,20 @@ class Loader extends PluginBase implements Listener {
         $this->saveDefaultConfig();
         $this->saveResource("items.yml");
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
-
         $targetTimeSeconds = $this->getConfig()->get("target_time", 60);
         $targetTimeTicks = $targetTimeSeconds * 20;
-
         $this->getScheduler()->scheduleRepeatingTask(new EnvoyTask($this), $targetTimeTicks);
     }
 
-    public function createChest() {
+    public function createChest(): void {
         $config = $this->getConfig();
         $chestLocations = $config->get("chest_locations", []);
 
-        $itemsConfig = new Config($this->getDataFolder() . "items.yml", Config::YAML);
-        $itemsData = $itemsConfig->get("items", []);
+        foreach ($this->getServer()->getOnlinePlayers() as $player) {
+            if ($player instanceof Player) {
+                $this->sendCountdownMessage($player, "Envoys are spawning soon, Get ready! Envoys are spawning in§f");
+            }
+        }
 
         foreach ($chestLocations as $chestLocation) {
             $worldName = $chestLocation["world"];
@@ -43,58 +45,58 @@ class Loader extends PluginBase implements Listener {
 
             if ($world !== null) {
                 $chest = VanillaBlocks::CHEST();
-
                 $position = new Vector3($chestLocation["x"], $chestLocation["y"], $chestLocation["z"]);
-
                 $world->setBlock($position, $chest);
-
-                foreach ($this->getServer()->getOnlinePlayers() as $player) {
-                    if ($player instanceof Player) {
-                        $player->sendMessage("A chest has spawned at {$worldName}, X: {$position->getX()}, Y: {$position->getY()}, Z: {$position->getZ()}!");
-                    }
-                }
-
-                $this->addItemsToChest($world, $position, $itemsData);
+                $this->addItemsToChest($world, $position);
             } else {
                 $this->getLogger()->error("World not found: " . $worldName);
             }
         }
-    }
 
-    public function despawnChests(): void {
-        $config = $this->getConfig();
-        $chestLocations = $config->get("chest_locations", []);
-
-        foreach ($chestLocations as $chestLocation) {
-            $worldName = $chestLocation["world"];
-            $world = $this->getServer()->getWorldManager()->getWorldByName($worldName);
-
-            if ($world !== null) {
-                $position = new Vector3($chestLocation["x"], $chestLocation["y"], $chestLocation["z"]);
-                $block = $world->getBlock($position);
-
-                if ($block instanceof TileChest) {
-                    $world->setBlock($position, VanillaBlocks::AIR());
-
-                    foreach ($this->getServer()->getOnlinePlayers() as $player) {
-                        if ($player instanceof Player) {
-                            $player->sendMessage("The chest at X: {$position->getX()}, Y: {$position->getY()}, Z: {$position->getZ()} has despawned!");
-                        }
-                    }
-                }
+        foreach ($this->getServer()->getOnlinePlayers() as $player) {
+            if ($player instanceof Player) {
+                $this->sendBroadcastMessage($player, "Envoys has spawned!");
             }
         }
     }
 
-    private function addItemsToChest(World $world, Vector3 $position, array $itemsData) {
+    private function sendCountdownMessage(Player $player, string $message): void {
+        $targetTimeSeconds = $this->getConfig()->get("target_time", 60);
+        $countdown = [15, 10, 5, 4, 3, 2, 1];
+
+        foreach ($countdown as $seconds) {
+            if ($seconds <= $targetTimeSeconds) {
+                $this->getScheduler()->scheduleDelayedTask(new ClosureTask(function () use ($player, $message, $seconds) {
+                    $player->sendMessage(TextFormat::YELLOW . "$message $seconds" . " seconds§e!");
+                }), ($targetTimeSeconds - $seconds) * 20);
+            }
+        }
+    }
+
+    private function sendBroadcastMessage(Player $player, string $message): void {
+        $player->sendMessage(TextFormat::GREEN . $message);
+    }
+
+    private function addItemsToChest(World $world, Vector3 $position): void {
         $tile = $world->getTile($position);
 
         if ($tile !== null && $tile instanceof TileChest) {
             $inventory = $tile->getInventory();
+            $chestSize = $inventory->getSize();
+            $itemsConfig = new Config($this->getDataFolder() . "items.yml", Config::YAML);
+            $itemsData = $itemsConfig->get("items", []);
+            $availableSlots = range(0, $chestSize - 1);
+            shuffle($availableSlots);
 
             foreach ($itemsData as $itemString) {
                 $item = StringToItemParser::getInstance()->parse($itemString);
-                $inventory->addItem($item);
+                $slotIndex = array_pop($availableSlots);
+
+                if ($slotIndex !== null) {
+                    $inventory->setItem($slotIndex, $item);
+                } else {
+                    break;
+                }
             }
         }
     }
