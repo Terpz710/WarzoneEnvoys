@@ -37,8 +37,6 @@ class Loader extends PluginBase implements Listener {
         $itemsConfig = new Config($this->getDataFolder() . "items.yml", Config::YAML);
         $itemsData = $itemsConfig->get("items", []);
 
-        $chestDespawnTime = $config->get("chest_despawn_time", 30);
-
         foreach ($chestLocations as $chestLocation) {
             $worldName = $chestLocation["world"];
             $world = $this->getServer()->getWorldManager()->getWorldByName($worldName);
@@ -57,20 +55,33 @@ class Loader extends PluginBase implements Listener {
                 }
 
                 $this->addItemsToChest($world, $position, $itemsData);
-
-                $this->getScheduler()->scheduleDelayedTask(new ClosureTask(function () use ($world, $position) {
-                    $block = $world->getBlock($position);
-                    if ($block instanceof TileChest) {
-                        $world->setBlock($position, VanillaBlocks::AIR());
-                        foreach ($this->getServer()->getOnlinePlayers() as $player) {
-                            if ($player instanceof Player) {
-                                $player->sendMessage("The chest at X: {$position->getX()}, Y: {$position->getY()}, Z: {$position->getZ()} has despawned!");
-                            }
-                        }
-                    }
-                }), $chestDespawnTime * 20);
             } else {
                 $this->getLogger()->error("World not found: " . $worldName);
+            }
+        }
+    }
+
+    public function despawnChests(): void {
+        $config = $this->getConfig();
+        $chestLocations = $config->get("chest_locations", []);
+
+        foreach ($chestLocations as $chestLocation) {
+            $worldName = $chestLocation["world"];
+            $world = $this->getServer()->getWorldManager()->getWorldByName($worldName);
+
+            if ($world !== null) {
+                $position = new Vector3($chestLocation["x"], $chestLocation["y"], $chestLocation["z"]);
+                $block = $world->getBlock($position);
+
+                if ($block instanceof TileChest) {
+                    $world->setBlock($position, VanillaBlocks::AIR());
+
+                    foreach ($this->getServer()->getOnlinePlayers() as $player) {
+                        if ($player instanceof Player) {
+                            $player->sendMessage("The chest at X: {$position->getX()}, Y: {$position->getY()}, Z: {$position->getZ()} has despawned!");
+                        }
+                    }
+                }
             }
         }
     }
