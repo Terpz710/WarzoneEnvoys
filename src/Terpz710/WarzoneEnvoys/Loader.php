@@ -113,7 +113,7 @@ class Loader extends PluginBase implements Listener {
                 }
 
                 if ($enchantments !== null) {
-                    $enchantmentData = explode(":", $enchantments);
+                    $enchantmentData = explode(",", $enchantments);
 
                     foreach ($enchantmentData as $enchantmentString) {
                         $enchantmentComponents = explode("=", $enchantmentString);
