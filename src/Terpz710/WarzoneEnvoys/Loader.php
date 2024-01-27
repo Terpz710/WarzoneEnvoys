@@ -177,7 +177,7 @@ class Loader extends PluginBase implements Listener {
 
     private function addFloatingTextAboveChest(World $world, Vector3 $position): void {
         $text = "Envoy\nTap me!";
-        $floatingText = new FloatingTextParticle($position->add(0.5, 1.5, 0.5), $text);
+        $floatingText = new FloatingTextParticle($position->add(0.5, 1.5, 0.5), (string)$text);
         $world->addParticle($floatingText);
     }
 }
