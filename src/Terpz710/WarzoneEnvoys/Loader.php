@@ -20,7 +20,7 @@ class Loader extends PluginBase implements Listener {
 
     public function onEnable(): void {
         $this->saveDefaultConfig();
-        $this->saveResources("items.yml");
+        $this->saveResource("items.yml");
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
 
         $targetTimeSeconds = $this->getConfig()->get("target_time", 30);
