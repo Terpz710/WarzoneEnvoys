@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Terpz710\WarzoneEnvoys\Task;
 
-use pocketmine\scheduler\Task
+use pocketmine\scheduler\Task;
 
 use Terpz710\WarzoneEnvoys\Loader;
 
