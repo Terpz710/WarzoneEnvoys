@@ -1,6 +1,8 @@
 # Terpz710
 
 items:
-  - "diamond_sword"
-  - "golden_apple"
-  - "iron_ingot"
+  - "diamond_sword:Epic Sword:1"
+  - "golden_apple:Delicious Apple:5"
+  - "iron_chestplate:Fortified Chestplate:1"
+  - "arrow:64"
+  - "diamond_pickaxe:Legendary Pickaxe:1"
