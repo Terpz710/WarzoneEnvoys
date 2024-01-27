@@ -40,7 +40,7 @@ class Loader extends PluginBase implements Listener {
             $event->cancel();
             $this->dropItemsFromChest($block->getPosition());
             $this->removeChest($block->getPosition());
-            $player->sendMessage(TextFormat::RED . "Chest opening cancelled. Items dropped to the floor.");
+            $player->sendMessage(TextFormat::GREEN . "Envoy claimed!");
         }
     }
 
