@@ -15,8 +15,8 @@ use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat;
 use pocketmine\scheduler\ClosureTask;
 use pocketmine\item\StringToItemParser;
-use pocketmine\item\Enchantment\StringToEnchantmentParser;
-use pocketmine\item\Enchantment\EnchantmentInstance;
+use pocketmine\item\enchantment\StringToEnchantmentParser;
+use pocketmine\item\enchantment\EnchantmentInstance;
 
 use Terpz710\WarzoneEnvoys\Task\EnvoyTask;
 
