@@ -37,7 +37,7 @@ class Loader extends PluginBase implements Listener {
         $itemsConfig = new Config($this->getDataFolder() . "items.yml", Config::YAML);
         $itemsData = $itemsConfig->get("items", []);
 
-        $chestDespawnTime = $config->get("chest_despawn_time", 30);
+        $chestDespawnTime = $config->get("chest_despawn_time", 60);
 
         foreach ($chestLocations as $chestLocation) {
             $worldName = $chestLocation["world"];
