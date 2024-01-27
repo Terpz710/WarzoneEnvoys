@@ -12,9 +12,11 @@ use pocketmine\math\Vector3;
 use pocketmine\player\Player;
 use pocketmine\world\World;
 use pocketmine\utils\Config;
-use pocketmine\item\StringToItemParser;
 use pocketmine\utils\TextFormat;
 use pocketmine\scheduler\ClosureTask;
+use pocketmine\item\StringToItemParser;
+use pocketmine\item\Enchantment\StringToEnchantmentParser;
+use pocketmine\item\Enchantment\EnchantmentInstance;
 
 use Terpz710\WarzoneEnvoys\Task\EnvoyTask;
 
@@ -93,11 +95,26 @@ class Loader extends PluginBase implements Listener {
                 $itemName = $itemComponents[0];
                 $customName = $itemComponents[1] ?? null;
                 $quantity = $itemComponents[2] ?? 1;
+                $enchantments = $itemComponents[3] ?? null;
                 $item = StringToItemParser::getInstance()->parse($itemName);
                 $item->setCount((int)$quantity);
 
                 if ($customName !== null) {
                     $item->setCustomName($customName);
+                }
+                
+                if ($enchantments !== null) {
+                    $enchantmentData = explode(":", $enchantments);
+
+                    foreach ($enchantmentData as $enchantmentString) {
+                        $enchantmentComponents = explode("=", $enchantmentString);
+                        $enchantmentName = $enchantmentComponents[0];
+                        $enchantmentLevel = $enchantmentComponents[1] ?? 1; // Default level is 1 if not specified
+
+                        $enchantment = StringToEnchantmentParser::getInstance()->parse($enchantmentName);
+                        $enchantmentInstance = new EnchantmentInstance($enchantment, (int)$enchantmentLevel);
+                        $item->addEnchantment($enchantmentInstance);
+                    }
                 }
                 $slotIndex = array_pop($availableSlots);
 
