@@ -18,5 +18,10 @@ class EnvoyTask extends Task {
 
     public function onRun(): void {
         $this->plugin->createChest();
+
+        $chestDespawnTime = $this->plugin->getConfig()->get("chest_despawn_time", 30);
+        $this->plugin->getScheduler()->scheduleDelayedTask(new ClosureTask(function () {
+            $this->plugin->despawnChests();
+        }), $chestDespawnTime * 20);
     }
 }
