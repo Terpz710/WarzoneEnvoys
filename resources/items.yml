@@ -2,8 +2,7 @@
 
 # "itemName:customName:Quantity:enchantName=Level"
 items:
-  - "diamond_sword:Epic Sword:1:sharpness=3:unbreaking=1"
-  - "golden_apple:Delicious Apple:5"
-  - "iron_chestplate:Fortified Chestplate:1:protection=2:thorns=1"
-  - "arrow:64"
-  - "diamond_pickaxe:Legendary Pickaxe:1:efficiency=5:fortune=3"
+  - diamond_sword:1:Sharpness=1
+  - golden_apple:5
+  - iron_pickaxe:2:Test Pickaxe:Fortune=3
+  - leather_chestplate:1:Thorns=2
