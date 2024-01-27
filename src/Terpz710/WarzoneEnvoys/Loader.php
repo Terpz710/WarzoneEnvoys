@@ -101,9 +101,10 @@ class Loader extends PluginBase implements Listener {
             foreach ($itemsData as $itemString) {
                 $itemComponents = explode(":", $itemString);
                 $itemName = $itemComponents[0];
-                $customName = $itemComponents[1] ?? null;
-                $quantity = $itemComponents[2] ?? 1;
+                $quantity = $itemComponents[1] ?? 1;
+                $customName = $itemComponents[2] ?? null;
                 $enchantments = $itemComponents[3] ?? null;
+
                 $item = StringToItemParser::getInstance()->parse($itemName);
                 $item->setCount((int)$quantity);
 
@@ -123,6 +124,7 @@ class Loader extends PluginBase implements Listener {
                         $item->addEnchantment($enchantmentInstance);
                     }
                 }
+
                 $slotIndex = array_pop($availableSlots);
 
                 if ($slotIndex !== null) {
