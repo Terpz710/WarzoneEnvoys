@@ -3,6 +3,9 @@
 # Time that chest will spawn.
 target_time: 30
 
+# Despawn timer
+chest_despawn_time: 60
+
 chest_locations:
   - world: "world"
     x: 10
