@@ -37,13 +37,18 @@ class Loader extends PluginBase implements Listener {
         $player = $event->getPlayer();
 
         if ($block->getTypeId() === VanillaBlocks::CHEST()->getTypeId()) {
-            $world = $block->getWorld();
-            $position = $block->asVector3();
+            $worldName = $block->getWorld()->getFolderName();
+            $world = $this->getServer()->getWorldManager()->getWorldByName($worldName);
 
-            if ($event->getAction() === PlayerInteractEvent::RIGHT_CLICK_BLOCK) {
-                $this->getScheduler()->scheduleDelayedTask(new ClosureTask(function () use ($world, $position) {
-                    $world->setBlock($position, VanillaBlocks::AIR());
-                }), 20 * 10);
+            if ($world !== null) {
+                $position = $block->asVector3();
+                if ($event->getAction() === PlayerInteractEvent::RIGHT_CLICK_BLOCK) {
+                    $this->getScheduler()->scheduleDelayedTask(new ClosureTask(function () use ($world, $position) {
+                        $world->setBlock($position, VanillaBlocks::AIR());
+                    }), 20 * 10);
+                }
+            } else {
+                $this->getLogger()->error("World not found: " . $worldName);
             }
         }
     }
@@ -86,7 +91,6 @@ class Loader extends PluginBase implements Listener {
         foreach ($countdown as $seconds) {
             if ($seconds <= $targetTimeSeconds) {
                 $countdownTask = new ClosureTask(function () use ($player, $message, $seconds) {
-
                     if ($player->isOnline()) {
                         $player->sendMessage(TextFormat::YELLOW . "$message $seconds" . " seconds§e!");
                     }
