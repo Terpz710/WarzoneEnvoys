@@ -3,6 +3,11 @@
 # Time that chest will spawn.
 target_time: 60
 
+# Certain amount of items a chest can have
+items_per_chest:
+  min: 1
+  max: 5
+
 # Where envoys will spawn
 chest_locations:
   - world: "world"
