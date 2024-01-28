@@ -6,3 +6,5 @@
 A Pocketmine-MP plugin that adds in warzone crates to enchance your pvp experience!
 
 better description coming soon!
+
+# STILL IN BETA! NOT COMPLETE YOU CAN HELP OUT THOUGH
