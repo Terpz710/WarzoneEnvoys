@@ -156,6 +156,7 @@ class Loader extends PluginBase implements Listener {
         if ($tile !== null && $tile instanceof TileChest) {
             $inventory = $tile->getInventory();
             $allSlotsEmpty = true;
+
             foreach ($inventory->getContents() as $content) {
                 if (!$content->isNull()) {
                     $allSlotsEmpty = false;
@@ -164,44 +165,53 @@ class Loader extends PluginBase implements Listener {
             }
 
             if ($allSlotsEmpty) {
+                $itemsPerChestConfig = $this->getConfig()->get("items_per_chest", []);
+                $minItemsPerChest = (int) $itemsPerChestConfig["min"] ?? 1;
+                $maxItemsPerChest = (int) $itemsPerChestConfig["max"] ?? 5;
+                $minItemsPerChest = min($minItemsPerChest, $maxItemsPerChest);
+                $numItemsToAdd = mt_rand($minItemsPerChest, $maxItemsPerChest);
                 $chestSize = $inventory->getSize();
                 $itemsConfig = new Config($this->getDataFolder() . "items.yml", Config::YAML);
                 $itemsData = $itemsConfig->get("items", []);
                 $availableSlots = range(0, $chestSize - 1);
                 shuffle($availableSlots);
 
-                foreach ($itemsData as $itemString) {
-                    $itemComponents = explode(":", $itemString);
-                    $itemName = $itemComponents[0];
-                    $quantity = $itemComponents[1] ?? 1;
-                    $customName = $itemComponents[2] ?? null;
-                    $enchantments = $itemComponents[3] ?? null;
-                    $item = StringToItemParser::getInstance()->parse($itemName);
-                    $item->setCount((int)$quantity);
+                for ($i = 0; $i < $numItemsToAdd; $i++) {
+                    $itemString = array_shift($itemsData);
 
-                    if ($customName !== null) {
-                        $item->setCustomName($customName);
-                    }
+                    if ($itemString !== null) {
+                        $itemComponents = explode(":", $itemString);
+                        $itemName = $itemComponents[0];
+                        $quantity = $itemComponents[1] ?? 1;
+                        $customName = $itemComponents[2] ?? null;
+                        $enchantments = $itemComponents[3] ?? null;
+                        $item = StringToItemParser::getInstance()->parse($itemName);
+                        $item->setCount((int)$quantity);
 
-                    if ($enchantments !== null) {
-                        $enchantmentData = explode(",", $enchantments);
-
-                        foreach ($enchantmentData as $enchantmentString) {
-                            $enchantmentComponents = explode("=", $enchantmentString);
-                            $enchantmentName = $enchantmentComponents[0];
-                            $enchantmentLevel = $enchantmentComponents[1] ?? 1;
-                            $enchantment = StringToEnchantmentParser::getInstance()->parse($enchantmentName);
-                            $enchantmentInstance = new EnchantmentInstance($enchantment, (int)$enchantmentLevel);
-                            $item->addEnchantment($enchantmentInstance);
+                        if ($customName !== null) {
+                            $item->setCustomName($customName);
                         }
-                    }
 
-                    $slotIndex = array_pop($availableSlots);
+                        if ($enchantments !== null) {
+                            $enchantmentData = explode(",", $enchantments);
 
-                    if ($slotIndex !== null) {
-                        $inventory->setItem($slotIndex, $item);
-                    } else {
-                        break;
+                            foreach ($enchantmentData as $enchantmentString) {
+                                $enchantmentComponents = explode("=", $enchantmentString);
+                                $enchantmentName = $enchantmentComponents[0];
+                                $enchantmentLevel = $enchantmentComponents[1] ?? 1;
+                                $enchantment = StringToEnchantmentParser::getInstance()->parse($enchantmentName);
+                                $enchantmentInstance = new EnchantmentInstance($enchantment, (int)$enchantmentLevel);
+                                $item->addEnchantment($enchantmentInstance);
+                            }
+                        }
+
+                        $slotIndex = array_shift($availableSlots);
+
+                        if ($slotIndex !== null) {
+                            $inventory->setItem($slotIndex, $item);
+                        } else {
+                            break;
+                        }
                     }
                 }
             }
