@@ -1,12 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Terpz710\WarzoneEnvoys\API;
 
 use pocketmine\world\particle\FloatingTextParticle;
+use pocketmine\world\particle\HugeExplodeParticle;
 use pocketmine\world\Position;
 use pocketmine\math\Vector3;
 
-class FloatingTextAPI
+class EnvoyAPI
 {
     public static array $floatingText = [];
 
@@ -41,5 +44,11 @@ class FloatingTextAPI
         $floatingText->setText($text);
         self::$floatingText[$tag][1] = $floatingText;
         self::$floatingText[$tag][0]->getWorld()->addParticle(self::$floatingText[$tag][0], $floatingText, self::$floatingText[$tag][0]->getWorld()->getPlayers());
+    }
+
+    public static function explode(Position $position): void
+    {
+        $particle = new HugeExplodeParticle();
+        $position->getWorld()->addParticle(new Vector3($position->x + 0.5, $position->y + 1, $position->z + 0.5), $particle, $position->getWorld()->getPlayers());
     }
 }
