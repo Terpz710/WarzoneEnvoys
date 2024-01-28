@@ -19,9 +19,10 @@ use pocketmine\scheduler\ClosureTask;
 use pocketmine\item\StringToItemParser;
 use pocketmine\item\enchantment\StringToEnchantmentParser;
 use pocketmine\item\enchantment\EnchantmentInstance;
+use pocketmine\network\mcpe\protocol\PlaySoundPacket;
 
 use Terpz710\WarzoneEnvoys\Task\EnvoyTask;
-use Terpz710\WarzoneEnvoys\API\FloatingTextAPI;
+use Terpz710\WarzoneEnvoys\API\EnvoyAPI;
 
 class Loader extends PluginBase implements Listener {
 
@@ -44,12 +45,19 @@ class Loader extends PluginBase implements Listener {
             $this->removeChest($block->getPosition());
             $this->removeFloatingText($block->getPosition());
             $player->sendMessage(TextFormat::GREEN . "Envoy claimed!");
+            $this->playSound($player, "random.explode");
         }
+    }
+
+    private function playSound(Player $player, string $sound): void{
+        $pos = $player->getPosition();
+        $packet = PlaySoundPacket::create($sound, $pos->getX(), $pos->getY(), $pos->getZ(), 150, 1);
+        $player->getNetworkSession()->sendDataPacket($packet);
     }
 
     private function removeFloatingText(Position $position): void {
         $tag = "envoy_" . $position->getX() . "_" . $position->getY() . "_" . $position->getZ();
-        FloatingTextAPI::remove($tag);
+        EnvoyAPI::remove($tag);
     }
 
     private function dropItemsFromChest(Position $position): void {
@@ -73,6 +81,7 @@ class Loader extends PluginBase implements Listener {
         $world = $position->getWorld();
         if ($world !== null) {
             $world->setBlock($position, VanillaBlocks::AIR());
+            EnvoyAPI::explode($position);
         }
     }
 
@@ -95,7 +104,7 @@ class Loader extends PluginBase implements Listener {
                 $position = new Position($chestLocation["x"], $chestLocation["y"], $chestLocation["z"], $world);
                 $world->setBlock($position, $chest);
                 $text = "§l§bEnvoy\nTap me!";
-                FloatingTextAPI::create($position, $text, "envoy_" . $position->getX() . "_" . $position->getY() . "_" . $position->getZ());
+                EnvoyAPI::create($position, $text, "envoy_" . $position->getX() . "_" . $position->getY() . "_" . $position->getZ());
 
                 $this->addItemsToChest($world, $position);
             } else {
