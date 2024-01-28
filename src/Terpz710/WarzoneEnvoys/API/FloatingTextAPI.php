@@ -1,11 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Terpz710\WarzoneEnvoys\API;
 
 use pocketmine\world\particle\FloatingTextParticle;
 use pocketmine\world\Position;
+use pocketmine\math\Vector3;
 
 class FloatingTextAPI
 {
@@ -18,7 +17,7 @@ class FloatingTextAPI
             self::remove($tag);
         }
         self::$floatingText[$tag] = [$position, $floatingText];
-        $position->getWorld()->addParticle($position, $floatingText, $position->getWorld()->getPlayers());
+        $position->getWorld()->addParticle(new Vector3($position->x + 0.5, $position->y + 1, $position->z + 0.5), $floatingText, $position->getWorld()->getPlayers());
     }
 
     public static function remove(string $tag): void
