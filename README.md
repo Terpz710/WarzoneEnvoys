@@ -9,6 +9,7 @@ Support for 5.0.0-6.0.0 API
 
 # Features
 * Add items inside the chest!
+* You can set a min and max amount of items that a chest can spawn with!
 * Set a certain amount of time before envoys are spawned!
 * Messages are configurable!
 * You can set unlimited of envoys(chest)!
