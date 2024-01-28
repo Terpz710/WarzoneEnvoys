@@ -26,9 +26,14 @@ use Terpz710\WarzoneEnvoys\API\EnvoyAPI;
 
 class Loader extends PluginBase implements Listener {
 
+    private Config $messagesConfig;
+
     public function onEnable(): void {
         $this->saveDefaultConfig();
         $this->saveResource("items.yml");
+        $this->saveResource("messages.yml");
+        $this->messagesConfig = new Config($this->getDataFolder() . "messages.yml", Config::YAML);
+
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
         $targetTimeSeconds = $this->getConfig()->get("target_time", 60);
         $targetTimeTicks = $targetTimeSeconds * 20;
@@ -44,7 +49,7 @@ class Loader extends PluginBase implements Listener {
             $this->dropItemsFromChest($block->getPosition());
             $this->removeChest($block->getPosition());
             $this->removeFloatingText($block->getPosition());
-            $player->sendMessage(TextFormat::GREEN . "Envoy claimed!");
+            $player->sendMessage($this->messagesConfig->get("envoy_claimed"));
             $this->playSound($player, "random.explode");
         }
     }
@@ -91,7 +96,7 @@ class Loader extends PluginBase implements Listener {
 
         foreach ($this->getServer()->getOnlinePlayers() as $player) {
             if ($player instanceof Player) {
-                $this->sendCountdownMessage($player, "Envoys are spawning soon, Get ready! Envoys are spawning in§f");
+                $this->sendCountdownMessage($player, $this->messagesConfig->get("envoy_spawn_countdown"));
             }
         }
 
@@ -103,7 +108,7 @@ class Loader extends PluginBase implements Listener {
                 $chest = VanillaBlocks::CHEST();
                 $position = new Position($chestLocation["x"], $chestLocation["y"], $chestLocation["z"], $world);
                 $world->setBlock($position, $chest);
-                $text = "§l§bEnvoy\nTap me!";
+                $text = $this->messagesConfig->get("floating_text");
                 EnvoyAPI::create($position, $text, "envoy_" . $position->getX() . "_" . $position->getY() . "_" . $position->getZ());
 
                 $this->addItemsToChest($world, $position);
@@ -114,7 +119,7 @@ class Loader extends PluginBase implements Listener {
 
         foreach ($this->getServer()->getOnlinePlayers() as $player) {
             if ($player instanceof Player) {
-                $this->sendBroadcastMessage($player, "Envoys have spawned!");
+                $this->sendBroadcastMessage($player, $this->messagesConfig->get("envoy_spawned"));
             }
         }
     }
@@ -127,7 +132,8 @@ class Loader extends PluginBase implements Listener {
             if ($seconds <= $targetTimeSeconds) {
                 $countdownTask = new ClosureTask(function () use ($player, $message, $seconds) {
                     if ($player->isOnline()) {
-                        $player->sendMessage(TextFormat::YELLOW . "$message $seconds" . " seconds§e!");
+                        $formattedMessage = str_replace(["{seconds}"], [$seconds], $message);
+                        $player->sendMessage($formattedMessage);
                     }
                 });
                 $taskHandler = $this->getScheduler()->scheduleDelayedTask($countdownTask, ($targetTimeSeconds - $seconds) * 20);
@@ -140,7 +146,8 @@ class Loader extends PluginBase implements Listener {
     }
 
     private function sendBroadcastMessage(Player $player, string $message): void {
-        $player->sendMessage(TextFormat::GREEN . $message);
+        $formattedMessage = $message;
+        $player->sendMessage($formattedMessage);
     }
 
     private function addItemsToChest(World $world, Position $position): void {
