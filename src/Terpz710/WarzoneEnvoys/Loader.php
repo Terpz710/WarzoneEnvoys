@@ -8,11 +8,11 @@ use pocketmine\block\VanillaBlocks;
 use pocketmine\block\tile\Chest as TileChest;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerInteractEvent;
-use pocketmine\world\particle\FloatingTextParticle;
 use pocketmine\plugin\PluginBase;
 use pocketmine\math\Vector3;
 use pocketmine\player\Player;
 use pocketmine\world\World;
+use pocketmine\world\Position;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat;
 use pocketmine\scheduler\ClosureTask;
@@ -21,6 +21,7 @@ use pocketmine\item\enchantment\StringToEnchantmentParser;
 use pocketmine\item\enchantment\EnchantmentInstance;
 
 use Terpz710\WarzoneEnvoys\Task\EnvoyTask;
+use Terpz710\WarzoneEnvoys\API\FloatingTextAPI;
 
 class Loader extends PluginBase implements Listener {
 
@@ -41,18 +42,17 @@ class Loader extends PluginBase implements Listener {
             $event->cancel();
             $this->dropItemsFromChest($block->getPosition());
             $this->removeChest($block->getPosition());
+            $this->removeFloatingText($block->getPosition());
             $player->sendMessage(TextFormat::GREEN . "Envoy claimed!");
         }
     }
 
-    private function removeChest(Vector3 $position): void {
-        $world = $position->getWorld();
-        if ($world !== null) {
-            $world->setBlock($position, VanillaBlocks::AIR());
-        }
+    private function removeFloatingText(Position $position): void {
+        $tag = "envoy_" . $position->getX() . "_" . $position->getY() . "_" . $position->getZ();
+        FloatingTextAPI::remove($tag);
     }
 
-    private function dropItemsFromChest(Vector3 $position): void {
+    private function dropItemsFromChest(Position $position): void {
         $world = $position->getWorld();
 
         if ($world !== null) {
@@ -66,6 +66,13 @@ class Loader extends PluginBase implements Listener {
                     $inventory->clear($slot);
                 }
             }
+        }
+    }
+
+    private function removeChest(Position $position): void {
+        $world = $position->getWorld();
+        if ($world !== null) {
+            $world->setBlock($position, VanillaBlocks::AIR());
         }
     }
 
@@ -85,10 +92,12 @@ class Loader extends PluginBase implements Listener {
 
             if ($world !== null) {
                 $chest = VanillaBlocks::CHEST();
-                $position = new Vector3($chestLocation["x"], $chestLocation["y"], $chestLocation["z"]);
+                $position = new Position($chestLocation["x"], $chestLocation["y"], $chestLocation["z"], $world);
                 $world->setBlock($position, $chest);
+                $text = "§l§bEnvoy\nTap me!";
+                FloatingTextAPI::create($position, $text, "envoy_" . $position->getX() . "_" . $position->getY() . "_" . $position->getZ());
+
                 $this->addItemsToChest($world, $position);
-                $this->addFloatingTextAboveChest($world, $position);
             } else {
                 $this->getLogger()->error("World not found: " . $worldName);
             }
@@ -108,7 +117,6 @@ class Loader extends PluginBase implements Listener {
         foreach ($countdown as $seconds) {
             if ($seconds <= $targetTimeSeconds) {
                 $countdownTask = new ClosureTask(function () use ($player, $message, $seconds) {
-
                     if ($player->isOnline()) {
                         $player->sendMessage(TextFormat::YELLOW . "$message $seconds" . " seconds§e!");
                     }
@@ -126,7 +134,7 @@ class Loader extends PluginBase implements Listener {
         $player->sendMessage(TextFormat::GREEN . $message);
     }
 
-    private function addItemsToChest(World $world, Vector3 $position): void {
+    private function addItemsToChest(World $world, Position $position): void {
         $tile = $world->getTile($position);
 
         if ($tile !== null && $tile instanceof TileChest) {
@@ -143,7 +151,6 @@ class Loader extends PluginBase implements Listener {
                 $quantity = $itemComponents[1] ?? 1;
                 $customName = $itemComponents[2] ?? null;
                 $enchantments = $itemComponents[3] ?? null;
-
                 $item = StringToItemParser::getInstance()->parse($itemName);
                 $item->setCount((int)$quantity);
 
@@ -173,12 +180,5 @@ class Loader extends PluginBase implements Listener {
                 }
             }
         }
-    }
-
-    private function addFloatingTextAboveChest(World $world, Vector3 $position): void {
-        $text = "Envoy\nTap me!";
-        $floatingText = new FloatingTextParticle((string)$text);
-        $floatingText->setInvisible(false);
-        $world->addParticle($floatingText);
     }
 }
