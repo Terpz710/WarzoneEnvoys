@@ -1,11 +1,23 @@
 # Terpz710
 
-# Messages
+# Message sent after the player claims the envoy
 envoy_claimed: "§aEnvoy claimed!"
+
+# Title sent after the player claims the envoy
 envoy_claimed_title: "§aClaimed!"
+
+# Subtitle sent after the player claims the envoy
 envoy_claimed_subtitle: "Enjoy the loot!"
+
+# Countdown before the envoys spawn
+# {seconds} = 15, 10, 5, 4, 3, 2, 1
+# It will countdown from 15 to 1 until the envoys spawn
 envoy_spawn_countdown: "§eEnvoys are spawning soon. Get ready! Envoys are spawning in §f{seconds} seconds§e!"
+
+# Message sent after the envoys have spawned
 envoy_spawned: "§aEnvoys have spawned!"
 
-# Floating text
+# Floating text above the envoy
+# § = color code
+# \n = case break
 floating_text: "§l§bEnvoy\nTap me!"
