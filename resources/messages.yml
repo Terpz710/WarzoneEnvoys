@@ -2,6 +2,8 @@
 
 # Messages
 envoy_claimed: "§aEnvoy claimed!"
+envoy_claimed_title: "§aClaimed!"
+envoy_claimed_subtitle: "Enjoy the loot!"
 envoy_spawn_countdown: "§eEnvoys are spawning soon. Get ready! Envoys are spawning in §f{seconds} seconds§e!"
 envoy_spawned: "§aEnvoys have spawned!"
 
