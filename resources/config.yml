@@ -1,14 +1,34 @@
 # Made by Terpz710
 
-# Time that chest will spawn.
+# An example on how to add envoys
+#  chest_locations:
+#    - world: "Warzone"
+#      x: -10
+#      y: 20
+#      z: -54
+#    - world: "Warzone"
+#      x: -87
+#      y: 20
+#      z: 34
+
+# Time before the envoy spawn
+# In seconds not ticks
+# 1 = 1second
+# 60 = 1minute
 target_time: 60
 
-# Certain amount of items a chest can have
+# Random amount of items that a envoy can have
+# For example the min is "1" and the max is "5"
+# There is a chance for the envoy to spawn in with
+# 2 items from the list or 4 but never 0 items and it will never exceed the max limit
 items_per_chest:
   min: 1
   max: 5
 
-# Where envoys will spawn
+# Envoy configuration
+# Take a look on top for an example on how to add
+# Envoys to your world
+# You can set unlimited of envoys
 chest_locations:
   - world: "world"
     x: 10
