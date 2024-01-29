@@ -64,7 +64,6 @@ class Loader extends PluginBase implements Listener {
         }
     }
 
-
     private function playSound(Player $player, string $sound): void{
         $pos = $player->getPosition();
         $packet = PlaySoundPacket::create($sound, $pos->getX(), $pos->getY(), $pos->getZ(), 150, 1);
