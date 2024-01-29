@@ -50,6 +50,8 @@ class Loader extends PluginBase implements Listener {
             $this->removeChest($block->getPosition());
             $this->removeFloatingText($block->getPosition());
             $player->sendMessage($this->messagesConfig->get("envoy_claimed"));
+            $player->sendTitle($this->messagesConfig->get("envoy_claimed_title"));
+            $player->sendSubTitle($this->messagesConfig->get("envoy_claimed_subtitle"));
             $this->playSound($player, "random.explode");
         }
     }
