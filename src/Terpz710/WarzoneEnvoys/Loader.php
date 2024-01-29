@@ -44,17 +44,26 @@ class Loader extends PluginBase implements Listener {
         $player = $event->getPlayer();
         $block = $event->getBlock();
 
-        if ($block->getTypeId() === VanillaBlocks::CHEST()->getTypeId()) {
-            $event->cancel();
-            $this->dropItemsFromChest($block->getPosition());
-            $this->removeChest($block->getPosition());
-            $this->removeFloatingText($block->getPosition());
-            $player->sendMessage($this->messagesConfig->get("envoy_claimed"));
-            $player->sendTitle($this->messagesConfig->get("envoy_claimed_title"));
-            $player->sendSubTitle($this->messagesConfig->get("envoy_claimed_subtitle"));
-            $this->playSound($player, "random.explode");
+        $config = $this->getConfig();
+        $chestLocations = $config->get("chest_locations", []);
+
+        foreach ($chestLocations as $chestLocation) {
+            $chestPosition = new Position($chestLocation["x"], $chestLocation["y"], $chestLocation["z"], $player->getWorld());
+
+            if ($block->getPosition()->equals($chestPosition)) {
+                $event->cancel();
+                $this->dropItemsFromChest($chestPosition);
+                $this->removeChest($chestPosition);
+                $this->removeFloatingText($chestPosition);
+                $player->sendMessage($this->messagesConfig->get("envoy_claimed"));
+                $player->sendTitle($this->messagesConfig->get("envoy_claimed_title"));
+                $player->sendSubTitle($this->messagesConfig->get("envoy_claimed_subtitle"));
+                $this->playSound($player, "random.explode");
+                break;
+            }
         }
     }
+
 
     private function playSound(Player $player, string $sound): void{
         $pos = $player->getPosition();
