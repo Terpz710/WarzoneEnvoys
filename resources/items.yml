@@ -1,6 +1,9 @@
 # Terpz710
 
-# "itemName:Quantity:customName:enchantName=Level"
+# Custom names and enchantments are optional
+
+# "itemName:quantity:customName:enchantName=level"
+
 items:
   - "diamond_sword:1:Epic Sword:sharpness=3,unbreaking=1"
   - "golden_apple:5:Delicious Apple"
