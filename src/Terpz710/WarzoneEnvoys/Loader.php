@@ -193,7 +193,7 @@ class Loader extends PluginBase implements Listener {
                         $itemComponents = explode(":", $itemString);
                         $itemName = $itemComponents[0];
                         $quantity = $itemComponents[1] ?? 1;
-                        $customName = $itemComponents[2] ?? null;
+                        $customName = ($itemComponents[2] ?? "") === "DEFAULT" ? null : $itemComponents[2] ?? null;
                         $enchantments = $itemComponents[3] ?? null;
                         $item = StringToItemParser::getInstance()->parse($itemName);
                         $item->setCount((int)$quantity);
