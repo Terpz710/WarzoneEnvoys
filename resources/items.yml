@@ -2,7 +2,20 @@
 
 # Custom names and enchantments are optional
 
+# Example with custom name
+# "itemName:quantity:customName"
+
+# Example without custom name
+# "itemName:quantity:DEFAULT"
+
+# Example with enchantments with custom name
 # "itemName:quantity:customName:enchantName=level"
+
+# Exmple with enchantments without custom name"
+# "itemName:quantity:DEFAULT:enchantName=level"
+
+# Example with multiple enchantments
+# "itemName:quantity:customName:enchantName=level,enchantNamr=level,enchantName=level"
 
 items:
   - "diamond_sword:1:Epic Sword:sharpness=3,unbreaking=1"
