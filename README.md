@@ -5,7 +5,7 @@
 # Description
 A Pocketmine-MP plugin that adds in warzone crates to enchance your gaming experience!
 
-Support for 5.0.0-6.0.0 API
+Support for 5.0.0-LATEST API
 
 # Features
 * Add items inside the chest!
