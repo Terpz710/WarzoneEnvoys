@@ -137,16 +137,19 @@ class Loader extends PluginBase implements Listener {
     private function sendCountdownMessage(Player $player, string $message): void {
         $targetTimeSeconds = $this->getConfig()->get("target_time", 60);
         $countdown = [15, 10, 5, 4, 3, 2, 1];
+        $hours = floor($targetTimeSeconds / 3600);
+        $minutes = floor(($targetTimeSeconds % 3600) / 60);
+        $seconds = $targetTimeSeconds % 60;
 
-        foreach ($countdown as $seconds) {
-            if ($seconds <= $targetTimeSeconds) {
-                $countdownTask = new ClosureTask(function () use ($player, $message, $seconds) {
+        foreach ($countdown as $secondsLeft) {
+            if ($secondsLeft <= $targetTimeSeconds) {
+                $countdownTask = new ClosureTask(function () use ($player, $message, $hours, $minutes, $seconds) {
                     if ($player->isOnline()) {
-                        $formattedMessage = str_replace(["{seconds}"], [$seconds], $message);
+                        $formattedMessage = str_replace(["{hours}", "{minutes}", "{seconds}"], [$hours, $minutes, $seconds], $message);
                         $player->sendMessage($formattedMessage);
                     }
                 });
-                $taskHandler = $this->getScheduler()->scheduleDelayedTask($countdownTask, ($targetTimeSeconds - $seconds) * 20);
+                $taskHandler = $this->getScheduler()->scheduleDelayedTask($countdownTask, ($targetTimeSeconds - $secondsLeft) * 20);
 
                 if ($taskHandler->isCancelled()) {
                     break;
