@@ -135,17 +135,14 @@ class Loader extends PluginBase implements Listener {
     }
 
     private function sendCountdownMessage(Player $player, string $message): void {
-        $targetTimeSeconds = $this->getConfig()->get("target_time", 60);
-        $countdown = [15, 10, 5, 4, 3, 2, 1];
-        $hours = floor($targetTimeSeconds / 3600);
-        $minutes = floor(($targetTimeSeconds % 3600) / 60);
-        $seconds = $targetTimeSeconds % 60;
+        $targetTimeSeconds = $this->getConfig()->get("target_time", 5400); // Default to 1 hour and 30 minutes
+        $countdown = [1800, 900, 600, 300, 60, 30, 15, 5, 4, 3, 2, 1]; // Countdown intervals in seconds
 
         foreach ($countdown as $secondsLeft) {
             if ($secondsLeft <= $targetTimeSeconds) {
-                $countdownTask = new ClosureTask(function () use ($player, $message, $hours, $minutes, $seconds) {
+                $countdownTask = new ClosureTask(function () use ($player, $message, $secondsLeft) {
                     if ($player->isOnline()) {
-                        $formattedMessage = str_replace(["{hours}", "{minutes}", "{seconds}"], [$hours, $minutes, $seconds], $message);
+                        $formattedMessage = str_replace("{time}", $this->formatTime($secondsLeft), $message);
                         $player->sendMessage($formattedMessage);
                     }
                 });
@@ -155,6 +152,20 @@ class Loader extends PluginBase implements Listener {
                     break;
                 }
             }
+        }
+    }
+
+    private function formatTime(int $seconds): string {
+        $hours = floor($seconds / 3600);
+        $minutes = floor(($seconds % 3600) / 60);
+        $seconds = $seconds % 60;
+
+        if ($hours > 0) {
+            return "{$hours} hours, {$minutes} minutes, and {$seconds} seconds";
+        } elseif ($minutes > 0) {
+            return "{$minutes} minutes and {$seconds} seconds";
+        } else {
+            return "{$seconds} seconds";
         }
     }
 
