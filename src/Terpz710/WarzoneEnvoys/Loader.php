@@ -135,8 +135,8 @@ class Loader extends PluginBase implements Listener {
     }
 
     private function sendCountdownMessage(Player $player, string $message): void {
-        $targetTimeSeconds = $this->getConfig()->get("target_time", 5400); // Default to 1 hour and 30 minutes
-        $countdown = [1800, 900, 600, 300, 60, 30, 15, 5, 4, 3, 2, 1]; // Countdown intervals in seconds
+        $targetTimeSeconds = $this->getConfig()->get("target_time", 5400);
+        $countdown = [1800, 900, 600, 300, 60, 30, 15, 5, 4, 3, 2, 1];
 
         foreach ($countdown as $secondsLeft) {
             if ($secondsLeft <= $targetTimeSeconds) {
