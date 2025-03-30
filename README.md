@@ -1,5 +1,5 @@
 <p align="center">
-    <a href="https://github.com/Terpz710/WarzoneEnvoys"><img src="https://github.com/Terpz710/WarzoneEnvoys/blob/main/icon.png"></img></a><br>
+    <a href="https://github.com/Terpz710/WarzoneEnvoys"><img src="https://github.com/Terpz710/WarzoneEnvoys/blob/stable/icon.png"></img></a><br>
     <b>Envoys plugin for Pocketmine-MP</b>
 
 # Description
