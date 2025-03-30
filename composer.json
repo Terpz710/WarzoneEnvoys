@@ -1,0 +1,14 @@
+{
+    "name": "terpz710/warzoneenvoys",
+    "type": "project",
+    "license": "Apache License 2.0",
+    "require": {
+        "pocketmine/pocketmine-mp": "^5.0.0",
+        "dapigguy/libpiggyupdatechecker": "*"
+    },
+    "autoload": {
+        "psr-0": {
+            "WarzoneEnvoys\\": "src/WarzoneEnvoys"
+        }
+    }
+}
