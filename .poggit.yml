@@ -1,8 +1,13 @@
 --- # Poggit-CI Manifest. Open the CI at https://poggit.pmmp.io/ci/Terpz710/WarzoneEnvoys
 build-by-default: true
 branches:
-- main
+- stable
+- legacy
 projects:
   WarzoneEnvoys:
     path: ""
+    libs:
+      - src: DaPigGuy/libPiggyUpdateChecker/libPiggyUpdateChecker
+        version: ^1.0.0
+    lint: false
 ...
